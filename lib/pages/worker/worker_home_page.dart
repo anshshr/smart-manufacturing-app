@@ -5,6 +5,14 @@ class WorkerHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home page"),
+        backgroundColor: Colors.tealAccent,
+        centerTitle: true,
+      ),
+
+      body: Container(),
+    );
   }
 }
