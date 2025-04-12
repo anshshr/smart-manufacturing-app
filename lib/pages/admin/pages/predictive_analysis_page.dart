@@ -24,7 +24,7 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
     try {
       // Fetch data from the first API
       final response = await http.get(
-        Uri.parse('http://192.168.200.56:3000/api/data/recent'),
+        Uri.parse('http://192.168.200.56:3000/api/data'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
