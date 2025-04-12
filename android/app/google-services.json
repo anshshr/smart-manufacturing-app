@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "155902281799",
+    "project_id": "smart-manufacturing-app",
+    "storage_bucket": "smart-manufacturing-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155902281799:android:06be7642e983dabb8e8962",
+        "android_client_info": {
+          "package_name": "com.example.smart_manufacturing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvlbseUYLxtumIJcR1Ylnf-9SRQCgSsNk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

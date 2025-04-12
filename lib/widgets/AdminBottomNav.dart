@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:smart_manufacturing/pages/worker/profile_page.dart';
-import 'package:smart_manufacturing/pages/worker/task_page.dart';
-import 'package:smart_manufacturing/pages/worker/worker_home_page.dart';
+import 'package:smart_manufacturing/pages/admin/pages/admin_profile_page.dart';
+import 'package:smart_manufacturing/pages/admin/pages/predictive_analysis_page.dart';
+import 'package:smart_manufacturing/pages/admin/pages/worker_management_page.dart';
+import 'package:smart_manufacturing/pages/admin/pages/machine_management_page.dart'; // Import Machine Management Page
 
-class BottomNavBar extends StatefulWidget {
+class AdminBottomNavBar extends StatefulWidget {
   @override
-  _BottomNavBarState createState() => _BottomNavBarState();
+  _AdminBottomNavBarState createState() => _AdminBottomNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
+class _AdminBottomNavBarState extends State<AdminBottomNavBar> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [WorkerHomePage(), TaskPage(), ProfilePage()];
+  final List<Widget> _pages = [
+    MachineManagementPage(),
+    PredictiveAnalysisPage(),
+    WorkerManagementPage(),
+    AdminProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   _currentIndex = index;
                 });
               },
-
+              backgroundColor:
+                  Colors.black, // Set the background color to black
               selectedItemColor:
                   Colors.green.shade600, // Green for selected items
               unselectedItemColor: Colors.black, // White for unselected items
@@ -55,6 +62,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.bar_chart),
                   label: 'Tasks',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Machines',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
