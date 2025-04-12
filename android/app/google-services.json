@@ -12,20 +12,7 @@
           "package_name": "com.example.smart_manufacturing"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "155902281799-rqkp1nbd6paa1tb4demk7jdl383mcbbk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.smart_manufacturing",
-            "certificate_hash": "b74878f62f58107850bd2f2028c38b50ecf76d62"
-          }
-        },
-        {
-          "client_id": "155902281799-k4jjs97vv4uh3e29biln813ctg9602kc.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
           "current_key": "AIzaSyBvlbseUYLxtumIJcR1Ylnf-9SRQCgSsNk"
@@ -33,19 +20,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "155902281799-k4jjs97vv4uh3e29biln813ctg9602kc.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "155902281799-r2mjcaa1o5oruptv7mb4lds8pk5urvlc.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.smartManufacturing"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
