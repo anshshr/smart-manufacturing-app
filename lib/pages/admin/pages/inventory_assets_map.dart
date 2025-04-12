@@ -5,6 +5,8 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
+import 'package:smart_manufacturing/services/multilingual_chat_bot/services/langchain_service.dart';
+import 'package:smart_manufacturing/services/notification_service.dart';
 
 class InventoryAssetsMap extends StatefulWidget {
   @override
@@ -544,6 +546,10 @@ class _InventoryAssetsMapState extends State<InventoryAssetsMap> {
                                                   ),
                                                 ),
                                               );
+                                              await sendPushNotification(
+                                                "You have been assigned a new task for ${asset['name']}",
+                                              );
+                                              // Send notification to the worker
                                               Navigator.pop(context);
                                             } catch (e) {
                                               ScaffoldMessenger.of(

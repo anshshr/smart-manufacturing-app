@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:smart_manufacturing/widgets/custom_appbar.dart';
 
 class AdminProfilePage extends StatefulWidget {
@@ -32,7 +33,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
         future: _fetchUserData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: Lottie.asset('assets/json/loading.json'));
           }
           if (snapshot.hasError) {
             return const Center(child: Text("Error loading profile"));
