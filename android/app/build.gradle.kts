@@ -10,8 +10,9 @@ plugins {
 android {
     namespace = "com.example.smart_manufacturing"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
-
+    //ndkVersion = "27.0.12077973"
+    ndkVersion = "28.0.13004108"
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

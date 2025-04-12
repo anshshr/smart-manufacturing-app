@@ -87,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                     ),
                     Text(
-                      "Smart Maintenance",
+                      "Smart Sense",
                       style: TextStyle(
                         fontSize: 44,
                         color: Colors.white,
@@ -143,7 +143,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ElevatedButton(
                       onPressed: () {
                         _authService.googleSignInWithRole(
-                          'maintenance',
+                          'worker',
                           () => _navigateToDashboard(context, false),
                           (error) => _showError(context, error),
                         );

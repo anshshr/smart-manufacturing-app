@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
+import 'package:smart_manufacturing/services/multilingual_chat_bot/services/langchain_service.dart';
+import 'package:smart_manufacturing/services/notification_service.dart';
 
 class InventoryAssetsMap extends StatefulWidget {
   @override
@@ -59,7 +62,7 @@ class _InventoryAssetsMapState extends State<InventoryAssetsMap> {
       "name": "Industrial Refrigeration Unit",
       "location": LatLng(23.1865840, 72.6294210),
       "type": "refrigeration",
-      "status": "operational",
+      "status": "maintenance",
       "lastMaintenance": "2023-02-18",
       "nextMaintenance": "2023-08-18",
     },
@@ -433,32 +436,150 @@ class _InventoryAssetsMapState extends State<InventoryAssetsMap> {
               ],
             ),
             actions: [
+              if (asset["status"] == "maintenance")
+                TextButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                      ),
+                      builder: (context) {
+                        return FutureBuilder(
+                          future:
+                              FirebaseFirestore.instance
+                                  .collection('users')
+                                  .where('role', isEqualTo: 'worker')
+                                  .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text("Error loading users"));
+                            }
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return Center(child: Text("No workers found"));
+                            }
+                            final users = snapshot.data!.docs;
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    "Assign Task to Worker",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: users.length,
+                                    itemBuilder: (context, index) {
+                                      final user = users[index].data();
+                                      return Card(
+                                        margin: EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundImage:
+                                                user['photoUrl'] != null
+                                                    ? NetworkImage(
+                                                      user['photoUrl'],
+                                                    )
+                                                    : null,
+                                            child:
+                                                user['photoUrl'] == null
+                                                    ? Icon(Icons.person)
+                                                    : null,
+                                          ),
+                                          title: Text(
+                                            user['name'] ?? 'Worker',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            user['email'] ?? 'No email',
+                                          ),
+                                          trailing: Icon(Icons.arrow_forward),
+                                          onTap: () async {
+                                            try {
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .doc(users[index].id)
+                                                  .collection('assignedTasks')
+                                                  .add({
+                                                    'assetName': asset['name'],
+                                                    'assetType': asset['type'],
+                                                    'status': asset['status'],
+                                                    'lastMaintenance':
+                                                        asset['lastMaintenance'],
+                                                    'nextMaintenance':
+                                                        asset['nextMaintenance'],
+                                                    'coordinates': {
+                                                      'latitude':
+                                                          asset['location']
+                                                              .latitude,
+                                                      'longitude':
+                                                          asset['location']
+                                                              .longitude,
+                                                    },
+                                                    'assignedAt':
+                                                        FieldValue.serverTimestamp(),
+                                                  });
+
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    "Task assigned to ${user['email']}",
+                                                  ),
+                                                ),
+                                              );
+                                              await sendPushNotification(
+                                                "You have been assigned a new task for ${asset['name']}",
+                                              );
+                                              // Send notification to the worker
+                                              Navigator.pop(context);
+                                            } catch (e) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    "Failed to assign task: $e",
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: Text("ASSIGN TASK"),
+                ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text("CLOSE"),
-              ),
-            ],
-          ),
-    );
-  }
-
-  void _showFilterDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text("Filter Assets"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Add filter options here
-                Text("Filter options will go here"),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("APPLY"),
               ),
             ],
           ),

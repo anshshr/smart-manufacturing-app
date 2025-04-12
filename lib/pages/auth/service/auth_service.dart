@@ -29,6 +29,8 @@ class AuthService {
       
       // Store user data with role
       await firestore.collection("users").doc(_auth.currentUser!.uid).set({
+        "name": _auth.currentUser!.displayName,
+        "photoUrl": _auth.currentUser!.photoURL,
         "email": _auth.currentUser!.email,
         "userId": _auth.currentUser!.uid,
         "role": role,

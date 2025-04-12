@@ -1,97 +1,103 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:smart_manufacturing/widgets/custom_appbar.dart';
 
-class WorkerProfilePage extends StatelessWidget {
-  const WorkerProfilePage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+  Future<Map<String, dynamic>?> _fetchUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      return snapshot.data();
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        title: const Text('Worker Profile'),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+      appBar: CustomAppBar(),
+      body: FutureBuilder<Map<String, dynamic>?>(
+        future: _fetchUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: Lottie.asset('assets/json/loading.json'));
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text("Error loading profile"));
+          }
+          if (!snapshot.hasData || snapshot.data == null) {
+            return const Center(child: Text("No profile data found"));
+          }
+
+          final userData = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Profile Image
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage:
+                      userData['photoUrl'] != null
+                          ? NetworkImage(userData['photoUrl'])
+                          : null,
+                  child:
+                      userData['photoUrl'] == null
+                          ? const Icon(Icons.person, size: 50)
+                          : null,
+                ),
+                const SizedBox(height: 16),
+
+                // Name
+                Text(
+                  userData['name'] ?? 'No Name',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                // Email
+                Text(
+                  userData['email'] ?? 'No Email',
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 8),
+
+                // Role
+                Chip(
+                  label: Text(
+                    userData['role'] ?? 'No Role',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.blue,
+                ),
+
+                const SizedBox(height: 24),
+
+                // Additional Information
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.info),
+                  title: const Text('Additional Info'),
+                  subtitle: Text(
+                    userData['additionalInfo'] ?? 'No additional information',
+                  ),
+                ),
+              ],
             ),
-            elevation: 6,
-            margin: const EdgeInsets.all(20),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: NetworkImage(
-                      "https://www.shutterstock.com/image-photo/portrait-african-black-worker-standing-600nw-2114436797.jpg",
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Ravi Kumar',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Maintenance Technician',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
-                  const Divider(height: 30, thickness: 1.2),
-
-                  _infoTile('Shift Timing', '08:00 AM - 04:00 PM'),
-                  _infoTile(
-                    'Machines Assigned',
-                    'Conveyor Belt 1, Press Machine 2',
-                  ),
-                  _infoTile('Last Maintenance', 'April 9, 2025'),
-                  _infoTile('Alerts Handled', '5 in last 7 days'),
-                  _infoTile('Status', 'Active'),
-
-                  const SizedBox(height: 20),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Performance',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  LinearProgressIndicator(
-                    value: 0.85,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey[300],
-                    color: Colors.teal,
-                  ),
-                  const SizedBox(height: 5),
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      '85%',
-                      style: TextStyle(
-                        color: Colors.teal,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+          );
+        },
       ),
-    );
-  }
-
-  Widget _infoTile(String title, String subtitle) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.info_outline, color: Colors.teal),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: Text(subtitle),
     );
   }
 }

@@ -12,10 +12,10 @@ Future<void> sendPushNotification(String message) async {
 
   final Map<String, dynamic> body = {
     "app_id":
-        "4ac56053-1ccf-478e-8446-8ac566e01109", // 🔥 Replace with your OneSignal App ID
-    "contents": {"en": message}, // Notification message
+        "4ac56053-1ccf-478e-8446-8ac566e01109", 
+    "contents": {"en": message}, 
     "headings": {"en": "New Report Available"},
-    "included_segments": ["All"], // 🔥 Replace with your segment
+    "included_segments": ["All"], 
     "data": {"reportDetails": "true"},
   };
 
@@ -27,6 +27,7 @@ Future<void> sendPushNotification(String message) async {
     );
 
     if (response.statusCode == 200) {
+      
       print("✅ Notification Sent Successfully");
     } else {
       print("❌ Failed to send notification: ${response.body}");
